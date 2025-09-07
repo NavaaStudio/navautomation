@@ -1,269 +1,212 @@
-# Navautomation — کلاینت رسمی اتوماسیون برای پیام‌رسان نوا
+# Navautomation
 
-> **دو زبانه (فارسی ↔ English)** — هر بخش به‌صورت دوگانه ارائه شده است: ابتدا فارسی، سپس متن معادل انگلیسی. این فایل برای قرارگیری در ریشهٔ مخزن گیت‌هاب و استفادهٔ رسمی به‌عنوان README طراحی شده است.
+**کتابخانهٔ رسمی خودکارسازی برای پیام‌رسان نوا**
 
----
-
-# مروری کوتاه
-
-**فارسی**
-
-Navautomation یک کتابخانهٔ پایتون رسمی و سبک برای تعامل برنامه‌محور با سرور پیام‌رسان «نوا» است. این پروژه با هدف فراهم کردن رابطی واضح، امن و قابل تست برای عملیات رایج (ورود، ثبت‌نام، مدیریت نشست رمزگذاری‌شده، ارسال/دریافت پیام، آپلود فایل و امور مدیریتی پایه) طراحی شده است.
-
-**English**
-
-Navautomation is a compact, production-oriented Python client library to interact programmatically with a Nava messenger server. It aims to provide a clear, secure and testable interface for common operations (login, signup, encrypted session management, send/receive messages, uploads, and basic administrative actions).
+> نسخه: رسمی | زبان‌ها: فارسی / English
 
 ---
 
-# اهداف و اصول طراحی
+## خلاصه — فارسی
 
-**فارسی**
+Navautomation یک کتابخانهٔ پایتون برای خودکارسازی و تعامل با API پیام‌رسان `nava.bolino.ir` است. این بسته کلاینت‌های همگام (`SyncClient`) و ناهمگام (`AsyncClient`)، مکانیزم امن ذخیرهٔ سشن (`session.nava`) و توابع کمکی رایج (ورود، ارسال پیام، آپلود، مدیریت گروه/کانال، OTP و غیره) را فراهم می‌کند.
 
-* **شفافیت و سادگی API**: توابع با نام‌های کوتاه و قابل فهم طراحی شده‌اند تا استفادهٔ روزمره و نوشتن اسکریپت را تسهیل کنند.
-* **امنیت**: ذخیرهٔ نشست به‌صورت رمزنگاری‌شده، مدیریت خطاهای سرور با ساختار مشخص، و رعایت اصول حداقلی در تعامل با سرور.
-* **قابلیت تست و توسعه**: جداکردن منطق شبکه، نگاشت خطاها و تاریخچهٔ لاگ مناسب برای تست و توسعه در محیط CI.
-
-**English**
-
-* **API clarity**: Short, predictable function names to simplify scripting and automation tasks.
-* **Security**: Encrypted session storage, structured server error handling, and minimal safe defaults when interacting with the server.
-* **Testability**: Network logic separated from business logic, consistent error types, and clear points for unit / integration testing.
+این README به‌صورت رسمی و حرفه‌ای نوشته شده و راهنمای نصب فوری، مثال‌های کاربردی، و نکات امنیتی را در خود دارد.
 
 ---
 
-# ویژگی‌های کلیدی / Key features
+## Summary — English
 
-**فارسی**
+Navautomation is a Python automation library for interacting with the Nava messaging platform API at `nava.bolino.ir`. It provides synchronous (`SyncClient`) and asynchronous (`AsyncClient`) clients, secure encrypted session persistence (`session.nava`) and utility helpers for common operations (auth, messaging, uploads, group/channel management, OTP, etc.).
 
-* پشتیبانی از عملیات پایهٔ کاربر: ثبت‌نام، ورود (پسورد و OTP)
-* ارسال، ویرایش، حذف پیام؛ واکنش (reaction)؛ علامت‌گذاری خوانده‌شده
-* ارسال فایل (آپلود) با پشتیبانی multipart
-* مدیریت گروه و کانال (ایجاد، پیوستن)
-* ذخیره/بارگذاری نشست رمزنگاری‌شده (`session.nava`)
-* خطاهای استاندارد شده (`NavaErr`) برای هندلینگ پیوسته
-
-**English**
-
-* User operations: signup, login (password and OTP)
-* Message operations: send, edit, delete, react, mark-read
-* File upload (multipart)
-* Group and channel management (create, join)
-* Encrypted session persistence (`session.nava`)
-* Standardized errors (`NavaErr`) for consistent handling
+This README contains installation, quickstart examples, security notes and publishing guidance.
 
 ---
 
-# نصب / Installation
+# Table of contents / فهرست محتوا
 
-**فارسی**
+1. Installation / نصب
+2. Quickstart examples / نمونهٔ سریع
+3. Sessions (encrypted) / سشن‌ها (رمزگذاری‌شده)
+4. API surface / قابلیت‌ها
+5. Admin usage & caution / استفادهٔ مدیریتی و هشدار
+6. Packaging & publish / بسته‌بندی و انتشار
+7. Contributing / مشارکت
+8. License / مجوز
+9. FAQ / عیب‌یابی مختصر
 
-پیشنهاد می‌شود بسته را از PyPI نصب کنید:
+---
+
+## 1) Installation / نصب (فوری)
+
+> نصب آخرین کد از شاخهٔ `main` (فوری):
 
 ```bash
-pip install navautomation
+pip install git+https://github.com/NavaaStudio/navautomation.git@main
 ```
 
-برای نصب از سورس (در حالت توسعه):
+برای توسعه محلی (editable):
 
 ```bash
-git clone https://github.com/<your-repo>/navautomation.git
+git clone https://github.com/NavaaStudio/navautomation.git
 cd navautomation
-python -m pip install -e .
+pip install -e .
 ```
 
-**English**
+پیش‌نیازهای پایه (در `requirements.txt`):
 
-Install from PyPI:
-
-```bash
-pip install navautomation
 ```
-
-For editable installation from source (development):
-
-```bash
-git clone https://github.com/<your-repo>/navautomation.git
-cd navautomation
-python -m pip install -e .
+requests>=2.28
+aiohttp>=3.8
+cryptography>=40
 ```
 
 ---
 
-# شروع سریع — Quickstart
+## 2) Quickstart / نمونهٔ سریع
 
-**فارسی**
+### Sync client (همگام)
 
-مثال کوتاه برای ورود، ارسال پیام و ذخیرهٔ سشن:
+```py
+from navautomation.client import SyncClient
 
-```python
+c = SyncClient()  # base و api_path از config پیش‌فرض استفاده می‌کنند
+# ورود با نام کاربری
+c.auth_login('username', 'password')
+# ارسال پیام
+c.msg_send('user', 42, 'سلام از Navautomation')
+# ذخیرهٔ سشن به فایل session.nava (رمزنگاری‌شده)
+c.sess_save('my passphrase')
+```
+
+### Async client (ناهمگام)
+
+```py
+import asyncio
+from navautomation.async_client import AsyncClient
+
+async def main():
+    c = AsyncClient()
+    await c.auth_login('username', 'password')
+    await c.msg_send('user', 42, 'پیام ناهمگام')
+    await c.close()
+
+asyncio.run(main())
+```
+
+---
+
+## 3) Sessions: `session.nava` (رمزگذاری‌شده)
+
+* فایل سشن به شکل `session.nava` در همان فولدری که اسکریپت اجرا می‌شود ذخیره می‌گردد (یا مسیر مشخص‌شده توسط کاربر).
+* محتوای فایل با `cryptography.Fernet` رمزگذاری می‌شود — برای بارگزاری مجدد باید همان passphrase را وارد کنید.
+* نکتهٔ امنیتی: عبارت عبور را امن نگهداری کنید؛ اگر فراموش شود، سشن قابل بازیابی نیست.
+
+---
+
+## 4) امکانات کلی / API surface
+
+کوتاه و مفید (توابع کلیدی):
+
+* احراز هویت:
+
+  * `otp_send(email)`
+  * `otp_ver(email, code)`
+  * `otp_login(email, code)`
+  * `auth_login(username, password)`
+  * `auth_signup(username, email, password)`
+* پیام‌رسانی:
+
+  * `msg_send(target_type, target_id, body)`
+  * `msg_fetch(target_type, target_id)`
+  * `msg_edit(message_id, body)`
+  * `msg_del(message_id)`
+  * `react(message_id, emoji, remove=False)`
+  * `mark_read(from_user)`
+* فایل و آپلود:
+
+  * `upload(filepath)` (multipart)
+* گروه/کانال:
+
+  * `join_group(group_id)`, `create_group(name, privacy)`
+  * `create_channel(name, is_broadcast)`
+* Session helpers:
+
+  * `sess_save(passphrase)`, `sess_load(passphrase)`, `sess_rm()`
+
+---
+
+## 5) Administrative use, announcements and safety
+
+* اگر شما مالک سرور و ادمین هستید؛ می‌توانید ابزارهای عمومی/اعلانی را اجرا کنید. قبل از ارسال پیام انبوه:
+
+  * سقف ریت-لیمیت سرور را بررسی کنید.
+  * بین ارسال‌ها تأخیر منطقی (`sleep`) قرار دهید.
+  * گزارش و لاگ ایجاد کنید تا در صورت نیاز بتوانید پیام‌ها را ردیابی کنید.
+* مثال اعلان تک‌بار برای شناسه‌های کاربری 1..20:
+
+```py
+from time import sleep
 from navautomation.client import SyncClient
 
 c = SyncClient()
-# ورود
-resp = c.auth_login("alice", "s3cr3t")
-print(resp)
-# ارسال پیام به user id = 42
-r = c.msg_send("user", 42, "Navautomation | نواتومیشن\nکتابخانه رسمی برای پیام‌رسان نوا")
-print(r)
-# ذخیرهٔ سشن رمزنگاری‌شده
-c.sess_save("strong-passphrase")
+c.auth_login('NavautomationGlobalAnnouncements', '3vdifji449')
+text = 'Navautomation | نواتومیشن\nکتابخانه سلف برای پیامرسان نوا'
+for uid in range(1,21):
+    c.msg_send('user', uid, text)
+    sleep(0.5)  # تأخیر کوچک برای احترام به محدودیت‌ها
 ```
 
-**English**
+> هشدار: استفادهٔ نابجا یا ارسال مکرر می‌تواند موجب مسدودسازی حساب‌ها شود. از این قابلیت تنها در شرایط مجاز و با اطلاع کاربران استفاده کنید.
 
-Minimal example showing login, send message and save encrypted session:
+---
 
-```python
-from navautomation.client import SyncClient
+## 6) Packaging & publish (خلاصه)
 
-c = SyncClient()
-# login
-resp = c.auth_login("alice", "s3cr3t")
-print(resp)
-# send message to user id = 42
-r = c.msg_send("user", 42, "Navautomation | NavaAutomation\nOfficial client for Nava messenger")
-print(r)
-# save encrypted session
-c.sess_save("strong-passphrase")
+1. نسخهٔ جدید را در `pyproject.toml` یا `setup.cfg` به‌روزرسانی کنید.
+2. بسته‌بندی:
+
+   ```bash
+   python -m build
+   ```
+3. بارگذاری به PyPI (نیاز به حساب PyPI):
+
+   ```bash
+   pip install twine
+   twine upload dist/*
+   ```
+4. پس از انتشار، نصب با `pip install navautomation` امکان‌پذیر است.
+
+نکته: در زمان انتشار عمومی، نام پکیج و وابستگی‌ها را با دقت بررسی کنید.
+
+---
+
+## 7) Contributing / مشارکت
+
+* برای مشارکت: fork کنید، شاخهٔ feature بسازید، تغییرات را در branch خود انجام دهید و pull request ارسال کنید.
+* از linters و قالب‌بندی (Black, flake8) استفاده کنید و تست‌های واحد اضافه کنید.
+
+---
+
+## 8) License / مجوز
+
+پروژه تحت مجوز **MIT** منتشر می‌شود. لطفاً فایل `LICENSE` را در repo قرار دهید.
+
+---
+
+## 9) FAQ / Troubleshooting (مختصر)
+
+* `ModuleNotFoundError: async_client` → اگر این خطا را دارید، نسخهٔ نصب‌شده ناقص است؛ دستور نصب از گیت را اجرا کنید:
+
+```bash
+pip install --upgrade git+https://github.com/NavaaStudio/navautomation.git@main
 ```
 
----
-
-# مروری بر API (خلاصه) / API reference (summary)
-
-**فارسی**
-
-توابع مهم کلاس `SyncClient`:
-
-* `otp_send(email)` — ارسال کد OTP به ایمیل
-* `otp_ver(email, code)` — تایید کد OTP
-* `otp_login(email, code)` — ورود با OTP
-* `auth_login(user, pwd)` — ورود با نام‌کاربری/رمز
-* `auth_signup(user, email, pwd)` — ثبت‌نام کاربر
-* `msg_send(tt, id, body)` — ارسال پیام؛ `tt` یکی از `user|group|channel`
-* `msg_fetch(tt, id)` — واکشی پیام‌ها برای هدف مشخص
-* `msg_edit(mid, body)` — ویرایش پیام
-* `msg_del(mid)` — حذف پیام (soft delete)
-* `react(mid, emoji, remove=False)` — واکنش به پیام
-* `mark_read(from_user)` — علامت‌گذاری خوانده‌شده
-* `upload(filepath)` — آپلود فایل (multipart)
-* `join_group(gid)` — پیوستن به گروه
-* `create_group(name, privacy)` — ایجاد گروه
-* `create_channel(name, broadcast=False)` — ایجاد کانال
-* `report(type, target_id, reason)` — ثبت گزارش
-* `sess_save(passphrase)` / `sess_load(passphrase)` / `sess_rm()` — مدیریت نشست رمزنگاری‌شده
-
-توابع بیشتر و جزئیات خطاها در داکیومنت کد و docstrings قرار دارد.
-
-**English**
-
-Key methods of `SyncClient`:
-
-* `otp_send(email)` — send OTP email
-* `otp_ver(email, code)` — verify OTP
-* `otp_login(email, code)` — login using OTP
-* `auth_login(user, pwd)` — login via username/password
-* `auth_signup(user, email, pwd)` — signup
-* `msg_send(tt, id, body)` — send message (tt ∈ `user|group|channel`)
-* `msg_fetch(tt, id)` — fetch messages
-* `msg_edit(mid, body)` — edit message
-* `msg_del(mid)` — soft-delete message
-* `react(mid, emoji, remove=False)` — add/remove reaction
-* `mark_read(from_user)` — mark messages read
-* `upload(filepath)` — file upload (multipart)
-* `join_group(gid)`, `create_group(name, privacy)`, `create_channel(name, broadcast=False)`
-* `report(type, target_id, reason)` — append report
-* `sess_save(passphrase)`, `sess_load(passphrase)`, `sess_rm()` — encrypted session helpers
-
-Detailed signatures and possible error responses are described in the package docstrings.
+* مشکل بارگذاری/ذخیرهٔ session → بررسی کنید `cryptography` نصب شده و از همان passphrase استفاده می‌کنید.
 
 ---
 
-# مدیریت نشست رمزنگاری‌شده (`session.nava`) / Encrypted session storage
+## Contact / تماس
 
-**فارسی**
-
-* نشست‌ها به‌صورت یک فایل رمزنگاری‌شده محلی ذخیره می‌شوند (پیش‌فرض: `session.nava`).
-* پیاده‌سازی توصیه‌شده: استفاده از AES-GCM با یک `passphrase` قوی برای رمزنگاری محتوا. فایل نباید در کنترل نسخه قرار گیرد.
-* توابع مرتبط: `sess_save(passphrase)`, `sess_load(passphrase)`, `sess_rm()`.
-
-**English**
-
-* Sessions are persisted as a local encrypted file (default: `session.nava`).
-* Recommended implementation: AES-GCM with a strong passphrase. Never commit the session file to version control.
-* Methods: `sess_save(passphrase)`, `sess_load(passphrase)`, `sess_rm()`.
+برای گزارش باگ یا درخواست ویژگی از بخش Issues در گیت‌هاب استفاده کنید.
 
 ---
-
-# نکات امنیتی و رعایت سیاست استفاده / Security & usage policy
-
-**فارسی**
-
-1. هرگونه ارسال گروهی یا خودکار پیام باید با رعایت قوانین محلی و سیاست‌های سرویس انجام شود. حتی در محیط تست از rate-limit و dry-run استفاده کنید.
-2. اطلاعات حساس (رمز، توکن، passphrase) را در مخزن کد قرار ندهید؛ از متغیرهای محیطی یا secret store استفاده کنید.
-3. لاگ‌ها را طوری بنویسید که اطلاعات حساس در آنها ثبت نشود.
-
-**English**
-
-1. Any automated or bulk messaging must comply with local laws and the platform policy. Always use rate-limiting and dry-run for tests.
-2. Do not commit secrets (passwords, tokens, passphrases) to the repository — use environment variables or secret management.
-3. Do not log sensitive material.
-
----
-
-# بسته‌بندی و انتشار / Packaging & publishing (short)
-
-**فارسی**
-
-* از `pyproject.toml` با backendِ `setuptools` یا `flit` استفاده کنید.
-* برای ساخت و تست بسته: `python -m build` سپس `twine` برای آپلود به TestPyPI و پس از آزمایش به PyPI اصلی.
-* همواره از API token استفاده کنید و آن را در متغیرهای امن CI (مثل GitHub Actions secrets) ذخیره نمایید.
-
-**English**
-
-* Use `pyproject.toml` and build with `python -m build`.
-* Upload to TestPyPI first via `twine`, verify, then upload to PyPI production.
-* Use API tokens stored securely in CI.
-
----
-
-# مشارکت / Contributing
-
-**فارسی**
-
-* Issues و Pull Requestها خوش‌آمد گفته می‌شوند. لطفاً قبل از ارسال PR، تست‌ها را اجرا و قالب‌بندی کد را رعایت کنید (`black`, `flake8`).
-* برای تغییر API یا افزودن قابلیت بزرگ، ابتدا یک Issue باز کنید و طرح پیشنهادی را ارائه دهید.
-
-**English**
-
-* Issues and PRs are welcome. Run tests and format code before submitting a PR (`black`, `flake8`).
-* For large API changes open an Issue first to discuss the design.
-
----
-
-# لایسنس / License
-
-**فارسی**
-
-این پروژه تحت مجوز MIT منتشر می‌شود. متن کامل مجوز در فایل `LICENSE` قرار دارد.
-
-**English**
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
----
-
-# تماس / Contact
-
-**فارسی**
-
-برای گزارش باگ یا درخواست ویژگی از بخش Issues در مخزن استفاده کنید.
-
-**English**
-
-Use repository Issues to report bugs or request features.
-
----
-
-*Document prepared for repository use. For additional assets (examples, CI workflows, or English-only readme) request a separate file.*
